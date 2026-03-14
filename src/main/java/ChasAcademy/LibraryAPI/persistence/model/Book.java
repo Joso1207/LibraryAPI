@@ -6,7 +6,7 @@ import lombok.*;
 import org.hibernate.validator.constraints.ISBN;
 
 @Entity
-@Getter @Setter @NoArgsConstructor
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class Book {
 
     @Id

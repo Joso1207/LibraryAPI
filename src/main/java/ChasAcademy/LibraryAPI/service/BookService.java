@@ -2,6 +2,7 @@ package ChasAcademy.LibraryAPI.service;
 
 import ChasAcademy.LibraryAPI.api.dto.BookRequestDTO;
 import ChasAcademy.LibraryAPI.api.dto.NewBookRequestDTO;
+import ChasAcademy.LibraryAPI.api.exceptions.BookNotFoundException;
 import ChasAcademy.LibraryAPI.api.mapper.Mapper;
 import ChasAcademy.LibraryAPI.persistence.model.Book;
 import ChasAcademy.LibraryAPI.persistence.repository.BookRepository;
@@ -36,7 +37,7 @@ public class BookService {
 
     public @NonNull BookRequestDTO getBookByID(Long id){
        Book entity = repo.findById(id).orElseThrow(
-               () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Book not found"));
+               () -> new BookNotFoundException(id));
        return mapper.toBookDTO(entity);
     }
 

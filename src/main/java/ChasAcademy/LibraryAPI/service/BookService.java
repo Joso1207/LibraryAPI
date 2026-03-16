@@ -54,8 +54,8 @@ public class BookService {
                         ()-> new AuthorNotFoundException(dto.author().id())
                 );
             } else if (dto.author().name() != null){
-                author = authorRepository.findByName(dto.author().name()).orElseThrow(
-                        ()-> new AuthorNotFoundException(dto.author().name())
+                author = authorRepository.findByName(dto.author().name()).orElseGet(
+                        () -> authorRepository.save(new Author(dto.author().name()))
                 );
             } else {
                 throw new IllegalArgumentException("ID or name must be supplied");

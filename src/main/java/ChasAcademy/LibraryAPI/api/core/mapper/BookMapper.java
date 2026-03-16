@@ -1,7 +1,7 @@
 package ChasAcademy.LibraryAPI.api.core.mapper;
 
+import ChasAcademy.LibraryAPI.api.core.dto.AuthorDTO;
 import ChasAcademy.LibraryAPI.api.core.dto.BookRequestDTO;
-import ChasAcademy.LibraryAPI.api.core.dto.NewAuthorDTO;
 import ChasAcademy.LibraryAPI.api.core.dto.NewBookRequestDTO;
 import ChasAcademy.LibraryAPI.persistence.model.Author;
 import ChasAcademy.LibraryAPI.persistence.model.Book;
@@ -14,9 +14,12 @@ public class BookMapper {
         return BookRequestDTO.builder()
                 .id(book.getId())
                 .title(book.getTitle())
-                .author(book.getAuthor())
                 .isbn(book.getIsbn())
                 .yearPublished(book.getPublishedYear())
+                .author(AuthorDTO.builder()
+                        .id(book.getAuthor().getId())
+                        .name(book.getAuthor().getName())
+                        .build())
                 .build();
     }
 

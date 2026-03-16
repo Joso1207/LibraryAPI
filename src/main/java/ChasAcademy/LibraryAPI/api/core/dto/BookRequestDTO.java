@@ -5,5 +5,5 @@ import lombok.*;
 
 
 @Builder
-public record BookRequestDTO(Long id, String title, Author author, String isbn, Integer yearPublished) {
+public record BookRequestDTO(Long id, String title, AuthorDTO author, String isbn, Integer yearPublished) {
 }

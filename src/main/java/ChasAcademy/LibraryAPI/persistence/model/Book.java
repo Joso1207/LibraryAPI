@@ -6,6 +6,7 @@ import lombok.*;
 import org.hibernate.validator.constraints.ISBN;
 
 @Entity
+@Builder
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class Book {
 
@@ -19,8 +20,9 @@ public class Book {
     private String title;
 
     @Column(nullable = false)
+    @ManyToOne
     @NotNull(message = "Author cannot be null")
-    private String author;
+    private Author author;
 
     @Column
     @ISBN
@@ -29,12 +31,12 @@ public class Book {
     @Column
     private Integer publishedYear;
 
-    public Book(String title,String author){
+    public Book(String title,Author author){
         this.title = title;
         this.author = author;
     }
 
-    public Book(String title,String author,String isbn,Integer publishedYear){
+    public Book(String title,Author author,String isbn,Integer publishedYear){
         this(title,author);
         this.isbn = isbn;
         this.publishedYear = publishedYear;

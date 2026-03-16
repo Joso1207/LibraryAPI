@@ -1,9 +1,10 @@
 package ChasAcademy.LibraryAPI.service;
 
-import ChasAcademy.LibraryAPI.api.v1.dto.BookRequestDTO;
-import ChasAcademy.LibraryAPI.api.v1.dto.NewBookRequestDTO;
-import ChasAcademy.LibraryAPI.api.exceptions.BookNotFoundException;
-import ChasAcademy.LibraryAPI.api.v1.mapper.Mapper;
+import ChasAcademy.LibraryAPI.api.core.BookCreationCMD;
+import ChasAcademy.LibraryAPI.api.core.dto.BookRequestDTO;
+import ChasAcademy.LibraryAPI.api.core.dto.NewBookRequestDTO;
+import ChasAcademy.LibraryAPI.api.core.exceptions.BookNotFoundException;
+import ChasAcademy.LibraryAPI.api.core.mapper.BookMapper;
 import ChasAcademy.LibraryAPI.persistence.model.Book;
 import ChasAcademy.LibraryAPI.persistence.repository.BookRepository;
 import lombok.NonNull;
@@ -16,10 +17,10 @@ import java.util.List;
 public class BookService {
 
     private final BookRepository repo;
-    private final Mapper mapper;
+    private final BookMapper mapper;
 
     @Autowired
-    public BookService(BookRepository repo, Mapper mapper){
+    public BookService(BookRepository repo, BookMapper mapper){
 
         this.repo = repo;
         this.mapper = mapper;
@@ -39,8 +40,8 @@ public class BookService {
        return mapper.toBookDTO(entity);
     }
 
-    public BookRequestDTO save(NewBookRequestDTO dto){
-        Book newBook = mapper.dtoToBook(dto);
+    public BookRequestDTO save(NewBookRequestDTO newbook){
+        Book newBook = mapper.dtoToBook(newbook);
         return mapper.toBookDTO(repo.save(newBook));
     }
 

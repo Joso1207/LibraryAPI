@@ -1,16 +1,14 @@
 package ChasAcademy.LibraryAPI.service;
 
-import ChasAcademy.LibraryAPI.api.dto.BookRequestDTO;
-import ChasAcademy.LibraryAPI.api.dto.NewBookRequestDTO;
+import ChasAcademy.LibraryAPI.api.v1.dto.BookRequestDTO;
+import ChasAcademy.LibraryAPI.api.v1.dto.NewBookRequestDTO;
 import ChasAcademy.LibraryAPI.api.exceptions.BookNotFoundException;
-import ChasAcademy.LibraryAPI.api.mapper.Mapper;
+import ChasAcademy.LibraryAPI.api.v1.mapper.Mapper;
 import ChasAcademy.LibraryAPI.persistence.model.Book;
 import ChasAcademy.LibraryAPI.persistence.repository.BookRepository;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 

@@ -1,7 +1,7 @@
-package ChasAcademy.LibraryAPI.api.controller;
+package ChasAcademy.LibraryAPI.api.v1.controller;
 
-import ChasAcademy.LibraryAPI.api.dto.BookRequestDTO;
-import ChasAcademy.LibraryAPI.api.dto.NewBookRequestDTO;
+import ChasAcademy.LibraryAPI.api.v1.dto.BookRequestDTO;
+import ChasAcademy.LibraryAPI.api.v1.dto.NewBookRequestDTO;
 import ChasAcademy.LibraryAPI.service.BookService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

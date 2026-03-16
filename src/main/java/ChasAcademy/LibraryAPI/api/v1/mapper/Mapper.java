@@ -1,8 +1,8 @@
-package ChasAcademy.LibraryAPI.api.mapper;
+package ChasAcademy.LibraryAPI.api.v1.mapper;
 
 
-import ChasAcademy.LibraryAPI.api.dto.BookRequestDTO;
-import ChasAcademy.LibraryAPI.api.dto.NewBookRequestDTO;
+import ChasAcademy.LibraryAPI.api.v1.dto.BookRequestDTO;
+import ChasAcademy.LibraryAPI.api.v1.dto.NewBookRequestDTO;
 import ChasAcademy.LibraryAPI.persistence.model.Book;
 import org.springframework.stereotype.Component;
 

@@ -21,7 +21,11 @@ public class Author {
     @NotNull(message = "Name cannot be null")
     String name;
 
-    @OneToMany(mappedBy = "book")
+    @OneToMany(mappedBy = "author")
     List<Book> writtenWorks;
+
+    public Author(String name){
+        this.name = name;
+    }
 
 }

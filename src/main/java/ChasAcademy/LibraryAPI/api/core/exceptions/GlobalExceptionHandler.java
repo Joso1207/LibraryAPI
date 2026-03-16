@@ -25,6 +25,17 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(AuthorNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleAuthorNotFound(AuthorNotFoundException ex) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("status", HttpStatus.NOT_FOUND.value());
+        body.put("error", "Author Not Found");
+        body.put("message", ex.getMessage());
+        body.put("Test","This was Generated with a custom Exception");
+        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+    }
+
     // Generic exception handler for other errors
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGenericException(Exception ex) {

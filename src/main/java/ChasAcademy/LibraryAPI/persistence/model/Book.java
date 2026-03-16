@@ -19,7 +19,6 @@ public class Book {
     @NotNull(message = "Title cannot be null")
     private String title;
 
-    @Column(nullable = false)
     @ManyToOne
     @NotNull(message = "Author cannot be null")
     private Author author;

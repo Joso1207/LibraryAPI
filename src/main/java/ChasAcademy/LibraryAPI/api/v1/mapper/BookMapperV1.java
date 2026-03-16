@@ -21,8 +21,8 @@ public class BookMapperV1 {
         return BookRequestDTOv1.builder()
                 .id(internal.id())
                 .title(internal.title())
-                .authorID(internal.author().getId())
-                .author(internal.author().getName())
+                .authorID(internal.author().id())
+                .author(internal.author().name())
                 .isbn(internal.isbn())
                 .yearPublished(internal.yearPublished())
                 .build();

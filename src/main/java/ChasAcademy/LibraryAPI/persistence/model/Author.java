@@ -17,7 +17,7 @@ public class Author {
     @Setter(AccessLevel.PROTECTED)
     Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false,unique = true)
     @NotNull(message = "Name cannot be null")
     String name;
 

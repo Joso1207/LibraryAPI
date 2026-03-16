@@ -1,9 +1,7 @@
-package ChasAcademy.LibraryAPI.api.exceptions;
+package ChasAcademy.LibraryAPI.api.core.exceptions;
 
-import ChasAcademy.LibraryAPI.persistence.model.Book;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 

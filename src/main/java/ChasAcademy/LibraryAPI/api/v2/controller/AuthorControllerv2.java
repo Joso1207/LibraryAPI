@@ -1,4 +1,4 @@
 package ChasAcademy.LibraryAPI.api.v2.controller;
 
-public class AuthorController {
+public class AuthorControllerv2 {
 }

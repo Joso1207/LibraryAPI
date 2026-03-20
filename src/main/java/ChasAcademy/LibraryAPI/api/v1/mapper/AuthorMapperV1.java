@@ -3,7 +3,9 @@ package ChasAcademy.LibraryAPI.api.v1.mapper;
 import ChasAcademy.LibraryAPI.api.core.dto.AuthorDTO;
 import ChasAcademy.LibraryAPI.api.core.dto.NewAuthorDTO;
 import ChasAcademy.LibraryAPI.persistence.model.Author;
+import org.springframework.stereotype.Component;
 
+@Component
 public class AuthorMapperV1 {
 
     public AuthorDTO authorToDTO(Author author){

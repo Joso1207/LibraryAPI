@@ -10,16 +10,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/v1/api/books")
-public class BookController {
+public class BookControllerv1 {
 
     private final BookService service;
     private final BookMapperV1 mapper;
 
-    public BookController(BookService service, BookMapperV1 mapper){
+    public BookControllerv1(BookService service, BookMapperV1 mapper){
         this.service = service;
         this.mapper = mapper;
     }

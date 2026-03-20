@@ -6,8 +6,6 @@ import ChasAcademy.LibraryAPI.api.v1.dto.BookRequestDTOv1;
 import ChasAcademy.LibraryAPI.api.v1.mapper.AuthorMapperV1;
 import ChasAcademy.LibraryAPI.api.v1.mapper.BookMapperV1;
 import ChasAcademy.LibraryAPI.service.AuthorService;
-import ChasAcademy.LibraryAPI.service.BookService;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,13 +15,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/v1/api/authors")
-public class AuthorController {
+public class AuthorControllerv1 {
 
     private final AuthorMapperV1 mapper;
     private final AuthorService service;
     private final BookMapperV1 bookMapper;
 
-    public AuthorController(AuthorMapperV1 mapper,AuthorService service,BookMapperV1 bookMapper){
+    public AuthorControllerv1(AuthorMapperV1 mapper, AuthorService service, BookMapperV1 bookMapper){
         this.mapper = mapper;
         this.service = service;
         this.bookMapper = bookMapper;

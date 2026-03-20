@@ -5,7 +5,9 @@ import ChasAcademy.LibraryAPI.api.v2.dto.BookRequestDTOv2;
 import ChasAcademy.LibraryAPI.api.core.dto.NewBookRequestDTO;
 import ChasAcademy.LibraryAPI.api.v2.dto.NewBookRequestDTOv2;
 import ChasAcademy.LibraryAPI.persistence.model.Book;
+import org.springframework.stereotype.Component;
 
+@Component
 public class BookMapperV2 {
 
     public BookRequestDTOv2 toBookDTO(Book book){

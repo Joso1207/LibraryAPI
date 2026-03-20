@@ -1,8 +1,10 @@
 package ChasAcademy.LibraryAPI.service;
 
 import ChasAcademy.LibraryAPI.api.core.dto.AuthorDTO;
+import ChasAcademy.LibraryAPI.api.core.dto.NewAuthorDTO;
 import ChasAcademy.LibraryAPI.api.core.exceptions.AuthorNotFoundException;
 import ChasAcademy.LibraryAPI.persistence.model.Author;
+import ChasAcademy.LibraryAPI.persistence.model.Book;
 import ChasAcademy.LibraryAPI.persistence.repository.AuthorRepository;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +29,12 @@ public class AuthorService {
         );
     }
 
-
+    public Author addAuthor(NewAuthorDTO dto){
+        return authorRepository.save(
+                Author.builder()
+                        .name(dto.name())
+                        .build()
+        );
+    }
 
 }

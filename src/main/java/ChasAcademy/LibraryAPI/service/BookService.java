@@ -1,10 +1,8 @@
 package ChasAcademy.LibraryAPI.service;
 
-import ChasAcademy.LibraryAPI.api.core.dto.BookRequestDTO;
 import ChasAcademy.LibraryAPI.api.core.dto.NewBookRequestDTO;
 import ChasAcademy.LibraryAPI.api.core.exceptions.AuthorNotFoundException;
 import ChasAcademy.LibraryAPI.api.core.exceptions.BookNotFoundException;
-import ChasAcademy.LibraryAPI.api.core.mapper.BookMapper;
 import ChasAcademy.LibraryAPI.persistence.model.Author;
 import ChasAcademy.LibraryAPI.persistence.model.Book;
 import ChasAcademy.LibraryAPI.persistence.repository.AuthorRepository;
@@ -19,32 +17,26 @@ import java.util.List;
 public class BookService {
 
     private final BookRepository bookRepository;
-    private final BookMapper mapper;
     private final AuthorRepository authorRepository;
 
     @Autowired
-    public BookService(BookRepository bookRepository, BookMapper mapper,AuthorRepository authorRepository){
+    public BookService(BookRepository bookRepository,AuthorRepository authorRepository){
 
         this.bookRepository = bookRepository;
-        this.mapper = mapper;
         this.authorRepository = authorRepository;
 
     }
 
-    public List<BookRequestDTO> findAll(){
-        return bookRepository.findAll()
-                .stream()
-                .map(mapper::toBookDTO)
-                .toList();
+    public List<Book> findAll(){
+        return bookRepository.findAll();
     }
 
-    public @NonNull BookRequestDTO getBookByID(Long id){
-       Book entity = bookRepository.findById(id).orElseThrow(
+    public @NonNull Book getBookByID(Long id){
+       return  bookRepository.findById(id).orElseThrow(
                () -> new BookNotFoundException(id));
-       return mapper.toBookDTO(entity);
     }
 
-    public BookRequestDTO save(NewBookRequestDTO dto){
+    public Book save(NewBookRequestDTO dto){
         Author author;
         if(dto.author() == null){
             throw new IllegalArgumentException("Author information is required");
@@ -62,9 +54,14 @@ public class BookService {
             }
         }
 
-        Book newBook = mapper.dtoToBook(dto);
-        newBook.setAuthor(author);
-        return mapper.toBookDTO(bookRepository.save(newBook));
+        Book newBook = Book.builder()
+                .title(dto.title())
+                .isbn(dto.isbn())
+                .publishedYear(dto.yearPublished())
+                .author(author)
+        .build();
+
+        return bookRepository.save(newBook);
     }
 
 

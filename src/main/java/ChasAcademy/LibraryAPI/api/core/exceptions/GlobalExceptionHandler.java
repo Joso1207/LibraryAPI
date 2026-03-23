@@ -15,7 +15,7 @@ public class GlobalExceptionHandler {
 
     // Example: handle "book not found"
     @ExceptionHandler(BookNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleBookNotFound(BookNotFoundException ex) {
+    public ResponseEntity<Map<String, Object>> bookNotFound(BookNotFoundException ex) {
         Map<String, Object> body = new HashMap<>();
         body.put("timestamp", LocalDateTime.now());
         body.put("status", HttpStatus.NOT_FOUND.value());
@@ -26,11 +26,33 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(AuthorNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleAuthorNotFound(AuthorNotFoundException ex) {
+    public ResponseEntity<Map<String, Object>> authorNotFound(AuthorNotFoundException ex) {
         Map<String, Object> body = new HashMap<>();
         body.put("timestamp", LocalDateTime.now());
         body.put("status", HttpStatus.NOT_FOUND.value());
         body.put("error", "Author Not Found");
+        body.put("message", ex.getMessage());
+        body.put("Test","This was Generated with a custom Exception");
+        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(LoanNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> loanNotFound(LoanNotFoundException ex) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("status", HttpStatus.NOT_FOUND.value());
+        body.put("error", "Loan Not Found");
+        body.put("message", ex.getMessage());
+        body.put("Test","This was Generated with a custom Exception");
+        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(BookNotAvailableException.class)
+    public ResponseEntity<Map<String, Object>> unavailableBook(BookNotAvailableException ex) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("status", HttpStatus.BAD_REQUEST.value());
+        body.put("error", "Loan Not Found");
         body.put("message", ex.getMessage());
         body.put("Test","This was Generated with a custom Exception");
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
@@ -46,5 +68,8 @@ public class GlobalExceptionHandler {
         body.put("message", ex.getMessage());
         return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+
+
 
 }

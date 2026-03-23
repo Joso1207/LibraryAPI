@@ -2,6 +2,7 @@ package ChasAcademy.LibraryAPI.persistence.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -23,9 +24,14 @@ public class Loan {
     Book book;
 
     @Column
+    @PastOrPresent
     LocalDate loanDate = LocalDate.now();
 
     @Column
     LocalDate returnDate = null;
+
+    public Loan(Book book){
+        this.book = book;
+    }
 
 }

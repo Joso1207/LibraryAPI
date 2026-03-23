@@ -31,7 +31,7 @@ public class BookService {
         return bookRepository.findAll();
     }
 
-    public @NonNull Book getBookByID(Long id){
+    public Book getBookByID(Long id){
        return  bookRepository.findById(id).orElseThrow(
                () -> new BookNotFoundException(id));
     }

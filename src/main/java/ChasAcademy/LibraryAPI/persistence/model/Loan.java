@@ -25,13 +25,16 @@ public class Loan {
 
     @Column
     @PastOrPresent
+    @Builder.Default
     LocalDate loanDate = LocalDate.now();
 
     @Column
+    @Builder.Default
     LocalDate returnDate = null;
 
     public Loan(Book book){
         this.book = book;
+        this.loanDate = LocalDate.now();
     }
 
 }

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -22,10 +23,12 @@ public class Author {
     String name;
 
     @OneToMany(mappedBy = "author")
-    List<Book> writtenWorks;
+    @Builder.Default
+    List<Book> writtenWorks = new ArrayList<>();
 
     public Author(String name){
         this.name = name;
+        this.writtenWorks = new ArrayList<>();
     }
 
 }

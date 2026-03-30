@@ -23,7 +23,7 @@ public class LoanControllerv1 {
     }
 
     @PostMapping
-    public ResponseEntity<LoanDTO> newLoan(Long bookID){
+    public ResponseEntity<LoanDTO> newLoan(@RequestBody Long bookID){
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(

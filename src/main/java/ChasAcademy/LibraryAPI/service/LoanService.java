@@ -1,5 +1,6 @@
 package ChasAcademy.LibraryAPI.service;
 
+import ChasAcademy.LibraryAPI.api.core.exceptions.BookNotFoundException;
 import ChasAcademy.LibraryAPI.api.core.exceptions.LoanNotFoundException;
 import ChasAcademy.LibraryAPI.persistence.model.Book;
 import ChasAcademy.LibraryAPI.persistence.model.Loan;

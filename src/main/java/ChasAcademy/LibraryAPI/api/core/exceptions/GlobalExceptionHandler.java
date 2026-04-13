@@ -52,10 +52,10 @@ public class GlobalExceptionHandler {
         Map<String, Object> body = new HashMap<>();
         body.put("timestamp", LocalDateTime.now());
         body.put("status", HttpStatus.BAD_REQUEST.value());
-        body.put("error", "Loan Not Found");
+        body.put("error", "Unable to create Loan");
         body.put("message", ex.getMessage());
         body.put("Test","This was Generated with a custom Exception");
-        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
     // Generic exception handler for other errors

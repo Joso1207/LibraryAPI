@@ -1,5 +1,6 @@
 package ChasAcademy.LibraryAPI.service;
 
+import ChasAcademy.LibraryAPI.api.core.exceptions.BookNotAvailableException;
 import ChasAcademy.LibraryAPI.api.core.exceptions.BookNotFoundException;
 import ChasAcademy.LibraryAPI.api.core.exceptions.LoanNotFoundException;
 import ChasAcademy.LibraryAPI.persistence.model.Book;
@@ -31,7 +32,9 @@ public class LoanService {
     }
 
     public Loan getLoanByID(Long id){
-        return repo.findByBookId(id).orElseThrow(
+
+
+        return repo.findById(id).orElseThrow(
                 ()->new LoanNotFoundException(id)
         );
     }
@@ -45,11 +48,14 @@ public class LoanService {
     }
 
     @Transactional
-    public Loan addLoan(Long bookID){
-        if(findActiveLoan(bookID).isPresent()){
-            //Book not available Exception
-        }
+    public synchronized Loan addLoan(Long bookID){
+
         Book book = bookService.getBookByID(bookID); //Throws book unavailable if book does not exist
+
+        if(findActiveLoan(bookID).isPresent()){
+            throw new BookNotAvailableException(bookID);
+        }
+
         return repo.save(new Loan(book));
     }
 

@@ -6,6 +6,9 @@ import ChasAcademy.LibraryAPI.api.core.exceptions.AuthorNotFoundException;
 import ChasAcademy.LibraryAPI.persistence.model.Author;
 import ChasAcademy.LibraryAPI.persistence.model.Book;
 import ChasAcademy.LibraryAPI.persistence.repository.AuthorRepository;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,16 +22,19 @@ public class AuthorService {
         this.authorRepository = authorRepository;
     }
 
+    @Cacheable("authors")
     public List<Author> findAll(){
         return authorRepository.findAll();
     }
 
+    @Cacheable(value = "authors", key = "#id")
     public Author findAuthorByID(Long id){
         return authorRepository.findById(id).orElseThrow(
                 () -> new AuthorNotFoundException(id)
         );
     }
 
+    @CachePut(value = "authors", key="#result.id")
     public Author addAuthor(NewAuthorDTO dto){
         return authorRepository.save(
                 Author.builder()

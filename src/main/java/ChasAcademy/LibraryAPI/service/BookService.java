@@ -9,6 +9,8 @@ import ChasAcademy.LibraryAPI.persistence.repository.AuthorRepository;
 import ChasAcademy.LibraryAPI.persistence.repository.BookRepository;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,15 +29,18 @@ public class BookService {
 
     }
 
+    @Cacheable("books")
     public List<Book> findAll(){
         return bookRepository.findAll();
     }
 
+    @Cacheable(value = "books", key = "#id")
     public Book getBookByID(Long id){
        return  bookRepository.findById(id).orElseThrow(
                () -> new BookNotFoundException(id));
     }
 
+    @CachePut(value = "books", key="#result.id")
     public Book save(NewBookRequestDTO dto){
         Author author;
         if(dto.author() == null){

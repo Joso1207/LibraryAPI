@@ -20,7 +20,7 @@ public class Loan {
 
     @OneToOne
     @NotNull
-    @JoinColumn(name = "book_id", nullable = false, unique = true)
+    @JoinColumn(name = "book_id", nullable = false)
     Book book;
 
     @Column

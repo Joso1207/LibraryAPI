@@ -1,8 +1,13 @@
 package ChasAcademy.LibraryAPI.api.core.dto;
 
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
 import lombok.*;
+import org.hibernate.validator.constraints.ISBN;
 
 @Builder
-public record NewBookRequestDTO(String title, AuthorDTO author, String isbn, Integer yearPublished) {
+public record NewBookRequestDTO(@NotBlank String title, @Valid @NotNull AuthorDTO author, @ISBN String isbn, @PastOrPresent Integer yearPublished) {
 }

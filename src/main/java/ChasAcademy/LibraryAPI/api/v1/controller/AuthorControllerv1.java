@@ -6,6 +6,7 @@ import ChasAcademy.LibraryAPI.api.v1.dto.BookRequestDTOv1;
 import ChasAcademy.LibraryAPI.api.v1.mapper.AuthorMapperV1;
 import ChasAcademy.LibraryAPI.api.v1.mapper.BookMapperV1;
 import ChasAcademy.LibraryAPI.service.AuthorService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -49,7 +50,7 @@ public class AuthorControllerv1 {
     }
 
     @PostMapping
-    public ResponseEntity<AuthorDTO> addAuthor(@RequestBody NewAuthorDTO postRequest){
+    public ResponseEntity<AuthorDTO> addAuthor(@Valid @RequestBody NewAuthorDTO postRequest){
         AuthorDTO entity = mapper.authorToDTO(service.addAuthor(postRequest));
         return ResponseEntity.status(HttpStatus.CREATED).body(entity);
     }

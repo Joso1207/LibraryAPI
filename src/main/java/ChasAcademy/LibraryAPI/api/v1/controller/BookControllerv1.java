@@ -5,6 +5,7 @@ import ChasAcademy.LibraryAPI.api.v1.dto.BookRequestDTOv1;
 import ChasAcademy.LibraryAPI.api.v1.dto.NewBookRequestDTOv1;
 import ChasAcademy.LibraryAPI.api.v1.mapper.BookMapperV1;
 import ChasAcademy.LibraryAPI.service.BookService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +26,7 @@ public class BookControllerv1 {
 
 
     @PostMapping
-    public ResponseEntity<BookRequestDTOv1> addBook(@RequestBody NewBookRequestDTOv1 postRequest){
+    public ResponseEntity<BookRequestDTOv1> addBook(@Valid @RequestBody NewBookRequestDTOv1 postRequest){
         NewBookRequestDTO newBook = mapper.v1dtoToBookRequest(postRequest);
         BookRequestDTOv1 responseBody = mapper.bookToDTOV1(service.save(newBook));
         return ResponseEntity.status(HttpStatus.CREATED).body(responseBody);

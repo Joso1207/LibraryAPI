@@ -55,7 +55,7 @@ public class BookService {
                         () -> authorRepository.save(new Author(dto.author().name()))
                 );
             } else {
-                throw new IllegalArgumentException("ID or name must be supplied");
+                throw new IllegalArgumentException("ID or name of Author must be supplied");
             }
         }
 

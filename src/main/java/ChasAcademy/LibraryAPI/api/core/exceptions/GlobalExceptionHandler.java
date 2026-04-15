@@ -71,7 +71,7 @@ public class GlobalExceptionHandler {
         Map<String, Object> body = new HashMap<>();
         body.put("timestamp", LocalDateTime.now());
         body.put("status", HttpStatus.CONFLICT.value());
-        body.put("error", "Bad Request");
+        body.put("error", "Conflict");
         body.put("message", Optional.ofNullable(ex.getMessage())
                 .orElse("Database constraint violated"));
         return new ResponseEntity<>(body, HttpStatus.CONFLICT);

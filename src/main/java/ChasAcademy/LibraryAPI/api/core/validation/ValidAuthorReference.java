@@ -1,9 +1,12 @@
-package ChasAcademy.LibraryAPI.api.v1.validation;
+package ChasAcademy.LibraryAPI.api.core.validation;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
-import java.lang.annotation.*;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

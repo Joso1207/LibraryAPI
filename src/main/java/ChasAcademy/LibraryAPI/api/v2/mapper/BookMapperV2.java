@@ -1,40 +1,40 @@
-package ChasAcademy.LibraryAPI.api.v1.mapper;
+package ChasAcademy.LibraryAPI.api.v2.mapper;
 
 
 import ChasAcademy.LibraryAPI.api.core.dto.AuthorDTO;
-import ChasAcademy.LibraryAPI.api.core.dto.AuthorReferenceDTO;
 import ChasAcademy.LibraryAPI.api.core.dto.NewBookRequestDTO;
 import ChasAcademy.LibraryAPI.api.v1.dto.BookRequestDTOv1;
 import ChasAcademy.LibraryAPI.api.v1.dto.NewBookRequestDTOv1;
-import ChasAcademy.LibraryAPI.persistence.model.Author;
+import ChasAcademy.LibraryAPI.api.v2.dto.BookRequestDTOv2;
 import ChasAcademy.LibraryAPI.persistence.model.Book;
 import org.springframework.stereotype.Component;
 
 @Component
-public class BookMapperV1 {
-    
+public class BookMapperV2 {
 
-    public BookRequestDTOv1 bookToDTOV1(Book book){
-        return BookRequestDTOv1.builder()
+    private final AuthorMapperV2 authorMapper;
+
+    public BookMapperV2(AuthorMapperV2 authorMapper) {
+        this.authorMapper = authorMapper;
+    }
+
+    public BookRequestDTOv2 bookToDTOV2(Book book, Boolean available){
+        return BookRequestDTOv2.builder()
                 .id(book.getId())
+                .available(available)
                 .title(book.getTitle())
-                .authorID(book.getAuthor().getId())
-                .author(book.getAuthor().getName())
+                .author(authorMapper.authorToDTO(book.getAuthor()))
                 .isbn(book.getIsbn())
                 .yearPublished(book.getPublishedYear())
                 .build();
     }
 
-    public NewBookRequestDTO v1dtoToBookRequest(NewBookRequestDTOv1 dto){
+    public NewBookRequestDTO v2dtoToBookRequest(NewBookRequestDTO dto){
         return NewBookRequestDTO.builder()
                 .title(dto.title())
                 .isbn(dto.isbn())
                 .yearPublished(dto.yearPublished())
-                .author(AuthorReferenceDTO.builder()
-                        .id(dto.authorID())
-                        .name(dto.author())
-                        .build()
-                )
+                .author(dto.author())
                 .build();
     }
 

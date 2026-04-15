@@ -9,5 +9,5 @@ import lombok.*;
 import org.hibernate.validator.constraints.ISBN;
 
 @Builder
-public record NewBookRequestDTO(@NotBlank String title, @Valid @NotNull AuthorDTO author, @ISBN String isbn, @PastOrPresent Integer yearPublished) {
+public record NewBookRequestDTO(@NotBlank String title, @Valid @NotNull AuthorReferenceDTO author, @ISBN String isbn, @PastOrPresent Integer yearPublished) {
 }

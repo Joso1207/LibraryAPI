@@ -63,7 +63,16 @@ public class LoanControllerv1 {
     }
 
     @Operation(summary = "Get all specific loan")
-    @ApiResponse(responseCode = "200", description = "Success")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Success"),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Not Found",
+                    content = @Content(
+                            schema = @Schema(implementation = ApiError.class)
+                    )
+            ),
+    })
     @GetMapping("/{id}")
     public ResponseEntity<LoanDTO> findLoanByID(@PathVariable Long id){
         return ResponseEntity.status(HttpStatus.OK).body(loanMapperv1.loanToDTO(service.getLoanByID(id)));

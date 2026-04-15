@@ -58,7 +58,16 @@ public class AuthorControllerv1 {
     }
 
     @Operation(summary = "Get specific author")
-    @ApiResponse(responseCode = "200", description = "Success")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Success"),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Not Found",
+                    content = @Content(
+                            schema = @Schema(implementation = ApiError.class)
+                    )
+            ),
+    })
     @GetMapping("/{ID}")
     public ResponseEntity<AuthorDTO> getAuthorByID(@PathVariable Long ID){
         return ResponseEntity.ok(mapper.authorToDTO(service.findAuthorByID(ID)));

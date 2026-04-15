@@ -64,7 +64,16 @@ public class BookControllerv1 {
     }
 
     @Operation(summary = "Get specific book")
-    @ApiResponse(responseCode = "200", description = "Success")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Success"),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Not Found",
+                    content = @Content(
+                            schema = @Schema(implementation = ApiError.class)
+                    )
+            ),
+    })
     @GetMapping("/{id}")
     public ResponseEntity<BookRequestDTOv1> getBookByID(@PathVariable Long id){
         return ResponseEntity.ok(mapper.bookToDTOV1(service.getBookByID(id)));

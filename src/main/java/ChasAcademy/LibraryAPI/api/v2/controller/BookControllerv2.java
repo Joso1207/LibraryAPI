@@ -3,9 +3,6 @@ package ChasAcademy.LibraryAPI.api.v2.controller;
 import ChasAcademy.LibraryAPI.api.core.ApiResponseWrapper;
 import ChasAcademy.LibraryAPI.api.core.dto.NewBookRequestDTO;
 import ChasAcademy.LibraryAPI.api.core.exceptions.ApiError;
-import ChasAcademy.LibraryAPI.api.v1.dto.BookRequestDTOv1;
-import ChasAcademy.LibraryAPI.api.v1.dto.NewBookRequestDTOv1;
-import ChasAcademy.LibraryAPI.api.v1.mapper.BookMapperV1;
 import ChasAcademy.LibraryAPI.api.v2.dto.BookRequestDTOv2;
 import ChasAcademy.LibraryAPI.api.v2.mapper.BookMapperV2;
 import ChasAcademy.LibraryAPI.service.BookService;
@@ -83,7 +80,16 @@ public class BookControllerv2 {
     }
 
     @Operation(summary = "Get specific book")
-    @ApiResponse(responseCode = "200", description = "Success")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Success"),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Not Found",
+                    content = @Content(
+                            schema = @Schema(implementation = ApiError.class)
+                    )
+            ),
+    })
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponseWrapper<BookRequestDTOv2>> getBookByID(@PathVariable Long id){
         BookRequestDTOv2 data = mapper.bookToDTOV2(

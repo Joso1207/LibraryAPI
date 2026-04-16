@@ -35,12 +35,12 @@ public class BookService {
 
     @Cacheable("books")
     public List<Book> findAll(){
-        return bookRepository.findAll();
+        return bookRepository.findAllWithAuthor();
     }
 
     @Cacheable(value = "books", key = "#id")
     public Book getBookByID(Long id){
-       return  bookRepository.findById(id).orElseThrow(
+       return  bookRepository.findByIdWithAuthor(id).orElseThrow(
                () -> new BookNotFoundException(id));
     }
 
@@ -54,27 +54,34 @@ public class BookService {
 
     //Method is transactional as its multiple steps,
     //Additionally uses OptimisticLocking on Book as to allow for Concurrency.
-    @Transactional
-    @CachePut(value = "books", key = "#id")
     public Book update(Long id, UpdateBookRequestDTO dto) {
         int attempts = 0;
-        while(attempts<5) {
+
+        while (true) {
             try {
-                Book existing = bookRepository.findById(id)
-                        .orElseThrow(() -> new BookNotFoundException(id));
 
-                updateFields(existing, dto);
-
-                return bookRepository.save(existing);
-
-            } catch (OptimisticLockException e) {
-                if (attempts > 3) {
+                return doUpdate(id, dto);
+            } catch (ObjectOptimisticLockingFailureException e) {
+                if (++attempts >= 5) {
                     throw e;
                 }
             }
-            attempts++;
         }
-        throw new IllegalStateException("method arrived to an unreachable state");
+
+    }
+
+    @CachePut(value = "books", key = "#result.id")
+    @Transactional//Separated the update attempt due to exception marking transaction to roll back otherwise
+    public Book doUpdate(Long id, UpdateBookRequestDTO dto) {
+
+        Book existing = bookRepository.findById(id)
+                .orElseThrow(() -> new BookNotFoundException(id));
+
+
+        updateFields(existing, dto);
+
+        bookRepository.flush();
+        return existing;
     }
 
     @CachePut(value = "books", key="#result.id")
@@ -99,7 +106,7 @@ public class BookService {
         Book newBook = Book.builder()
                 .title(dto.title())
                 .isbn(dto.isbn())
-                .publishedYear(dto.yearPublished())
+                .publishedYear(dto.yearPublished().getValue())
                 .author(author)
         .build();
 
@@ -118,7 +125,7 @@ public class BookService {
         }
 
         if (dto.yearPublished() != null) {
-            book.setPublishedYear(dto.yearPublished());
+            book.setPublishedYear(dto.yearPublished().getValue());
         }
 
         if (dto.author() != null) {

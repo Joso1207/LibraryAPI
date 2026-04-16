@@ -1,7 +1,6 @@
 package ChasAcademy.LibraryAPI.service;
 
 import ChasAcademy.LibraryAPI.api.core.exceptions.BookNotAvailableException;
-import ChasAcademy.LibraryAPI.api.core.exceptions.BookNotFoundException;
 import ChasAcademy.LibraryAPI.api.core.exceptions.LoanNotFoundException;
 import ChasAcademy.LibraryAPI.persistence.model.Book;
 import ChasAcademy.LibraryAPI.persistence.model.Loan;
@@ -44,6 +43,10 @@ public class LoanService {
     @Cacheable(value = "activeLoan", key="#bookID")
     public Optional<Loan> findActiveLoan(Long bookID){
         return repo.findByBookIdAndReturnDateIsNull(bookID);
+    }
+
+    public Boolean bookIsAvailable(Long bookID){
+        return !repo.existsByBookIdAndReturnDateIsNull(bookID);
     }
 
     @Cacheable("activeLoans")

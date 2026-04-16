@@ -19,4 +19,6 @@ public interface LoanRepository extends JpaRepository<Loan,Long> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     Optional<Loan> findByBookIdAndReturnDateIsNull(Long id);
 
+    Boolean existsByBookIdAndReturnDateIsNull(Long ID);
+
 }

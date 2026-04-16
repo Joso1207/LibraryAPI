@@ -72,7 +72,7 @@ public class BookControllerv2 {
                 service.findAll().stream()
                         .map(book -> mapper.bookToDTOV2(
                                 book,
-                                loanService.findActiveLoan(book.getId()).isPresent()
+                                loanService.bookIsAvailable(book.getId())
                         ))
                         .toList();
 
@@ -96,7 +96,7 @@ public class BookControllerv2 {
     public ResponseEntity<ApiResponseWrapper<BookResponseDTOv2>> getBookByID(@PathVariable Long id){
         BookResponseDTOv2 data = mapper.bookToDTOV2(
                         service.getBookByID(id),
-                        loanService.findActiveLoan(id).isPresent());
+                        loanService.bookIsAvailable(id));
 
         return ResponseEntity.ok(new ApiResponseWrapper<BookResponseDTOv2>(
                 data,"v2"
@@ -127,7 +127,7 @@ public class BookControllerv2 {
             @RequestBody UpdateBookRequestDTO dto
     ) {
         Book updated = service.update(id, dto);
-        Boolean available = loanService.findActiveLoan(id).isEmpty();
+        Boolean available = loanService.bookIsAvailable(id);
         return ResponseEntity.ok(new ApiResponseWrapper<>(mapper.bookToDTOV2(updated,available),"v2"));
 
 

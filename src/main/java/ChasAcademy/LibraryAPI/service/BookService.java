@@ -1,17 +1,21 @@
 package ChasAcademy.LibraryAPI.service;
 
 import ChasAcademy.LibraryAPI.api.core.dto.NewBookRequestDTO;
+import ChasAcademy.LibraryAPI.api.core.dto.UpdateBookRequestDTO;
 import ChasAcademy.LibraryAPI.api.core.exceptions.AuthorNotFoundException;
 import ChasAcademy.LibraryAPI.api.core.exceptions.BookNotFoundException;
 import ChasAcademy.LibraryAPI.persistence.model.Author;
 import ChasAcademy.LibraryAPI.persistence.model.Book;
 import ChasAcademy.LibraryAPI.persistence.repository.AuthorRepository;
 import ChasAcademy.LibraryAPI.persistence.repository.BookRepository;
+import jakarta.persistence.OptimisticLockException;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -38,6 +42,39 @@ public class BookService {
     public Book getBookByID(Long id){
        return  bookRepository.findById(id).orElseThrow(
                () -> new BookNotFoundException(id));
+    }
+
+    @CacheEvict(value = "books", key = "#id")
+    public void delete(Long id){
+        bookRepository.delete(
+                bookRepository.findById(id).orElseThrow(
+                        () -> new BookNotFoundException(id))
+        );
+    }
+
+    //Method is transactional as its multiple steps,
+    //Additionally uses OptimisticLocking on Book as to allow for Concurrency.
+    @Transactional
+    @CachePut(value = "books", key = "#id")
+    public Book update(Long id, UpdateBookRequestDTO dto) {
+        int attempts = 0;
+        while(attempts<5) {
+            try {
+                Book existing = bookRepository.findById(id)
+                        .orElseThrow(() -> new BookNotFoundException(id));
+
+                updateFields(existing, dto);
+
+                return bookRepository.save(existing);
+
+            } catch (OptimisticLockException e) {
+                if (attempts > 3) {
+                    throw e;
+                }
+            }
+            attempts++;
+        }
+        throw new IllegalStateException("method arrived to an unreachable state");
     }
 
     @CachePut(value = "books", key="#result.id")
@@ -70,4 +107,30 @@ public class BookService {
     }
 
 
+    private void updateFields(Book book, UpdateBookRequestDTO dto){
+
+        if (dto.title() != null) {
+            book.setTitle(dto.title());
+        }
+
+        if (dto.isbn() != null) {
+            book.setIsbn(dto.isbn());
+        }
+
+        if (dto.yearPublished() != null) {
+            book.setPublishedYear(dto.yearPublished());
+        }
+
+        if (dto.author() != null) {
+            if (dto.author().name()==null){
+                book.setAuthor(
+                        authorRepository.findById(dto.author().id()).orElseThrow(
+                                () -> new AuthorNotFoundException("No author with said id"))
+                );
+            } else {
+                book.setAuthor(authorRepository.findByName(dto.author().name()).orElseThrow(()-> new AuthorNotFoundException("No author by that name")));
+            }
+        }
+    }
 }
+

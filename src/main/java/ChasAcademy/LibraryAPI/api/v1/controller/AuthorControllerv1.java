@@ -3,7 +3,7 @@ package ChasAcademy.LibraryAPI.api.v1.controller;
 import ChasAcademy.LibraryAPI.api.core.dto.AuthorDTO;
 import ChasAcademy.LibraryAPI.api.core.dto.NewAuthorDTO;
 import ChasAcademy.LibraryAPI.api.core.exceptions.ApiError;
-import ChasAcademy.LibraryAPI.api.v1.dto.BookRequestDTOv1;
+import ChasAcademy.LibraryAPI.api.v1.dto.BookResponseDTOv1;
 import ChasAcademy.LibraryAPI.api.v1.mapper.AuthorMapperV1;
 import ChasAcademy.LibraryAPI.api.v1.mapper.BookMapperV1;
 import ChasAcademy.LibraryAPI.service.AuthorService;
@@ -77,7 +77,7 @@ public class AuthorControllerv1 {
             description = "Returns a list of all books attributed to author")
     @ApiResponse(responseCode = "200", description = "Success")
     @GetMapping("/{authorID}/books")
-    public ResponseEntity<List<BookRequestDTOv1>> getWrittenWorks(@PathVariable Long authorID){
+    public ResponseEntity<List<BookResponseDTOv1>> getWrittenWorks(@PathVariable Long authorID){
         return ResponseEntity.ok(
                 service.findAuthorByID(authorID)
                         .getWrittenWorks()

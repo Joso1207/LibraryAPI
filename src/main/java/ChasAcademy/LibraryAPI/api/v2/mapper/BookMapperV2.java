@@ -1,11 +1,8 @@
 package ChasAcademy.LibraryAPI.api.v2.mapper;
 
 
-import ChasAcademy.LibraryAPI.api.core.dto.AuthorDTO;
 import ChasAcademy.LibraryAPI.api.core.dto.NewBookRequestDTO;
-import ChasAcademy.LibraryAPI.api.v1.dto.BookRequestDTOv1;
-import ChasAcademy.LibraryAPI.api.v1.dto.NewBookRequestDTOv1;
-import ChasAcademy.LibraryAPI.api.v2.dto.BookRequestDTOv2;
+import ChasAcademy.LibraryAPI.api.v2.dto.BookResponseDTOv2;
 import ChasAcademy.LibraryAPI.persistence.model.Book;
 import org.springframework.stereotype.Component;
 
@@ -18,8 +15,8 @@ public class BookMapperV2 {
         this.authorMapper = authorMapper;
     }
 
-    public BookRequestDTOv2 bookToDTOV2(Book book, Boolean available){
-        return BookRequestDTOv2.builder()
+    public BookResponseDTOv2 bookToDTOV2(Book book, Boolean available){
+        return BookResponseDTOv2.builder()
                 .id(book.getId())
                 .available(available)
                 .title(book.getTitle())

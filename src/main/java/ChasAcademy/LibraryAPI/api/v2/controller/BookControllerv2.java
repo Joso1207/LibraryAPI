@@ -2,9 +2,11 @@ package ChasAcademy.LibraryAPI.api.v2.controller;
 
 import ChasAcademy.LibraryAPI.api.core.ApiResponseWrapper;
 import ChasAcademy.LibraryAPI.api.core.dto.NewBookRequestDTO;
+import ChasAcademy.LibraryAPI.api.core.dto.UpdateBookRequestDTO;
 import ChasAcademy.LibraryAPI.api.core.exceptions.ApiError;
-import ChasAcademy.LibraryAPI.api.v2.dto.BookRequestDTOv2;
+import ChasAcademy.LibraryAPI.api.v2.dto.BookResponseDTOv2;
 import ChasAcademy.LibraryAPI.api.v2.mapper.BookMapperV2;
+import ChasAcademy.LibraryAPI.persistence.model.Book;
 import ChasAcademy.LibraryAPI.service.BookService;
 import ChasAcademy.LibraryAPI.service.LoanService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -53,9 +55,9 @@ public class BookControllerv2 {
     @Operation(summary = "Create new Book")
     @ApiResponse(responseCode = "201", description = "Book created successfully")
     @PostMapping
-    public ResponseEntity<ApiResponseWrapper<BookRequestDTOv2>> addBook(@Valid @RequestBody NewBookRequestDTO postRequest){
+    public ResponseEntity<ApiResponseWrapper<BookResponseDTOv2>> addBook(@Valid @RequestBody NewBookRequestDTO postRequest){
         NewBookRequestDTO newBook = mapper.v2dtoToBookRequest(postRequest);
-        BookRequestDTOv2 responseBody = mapper.bookToDTOV2(service.save(newBook),true); //A created book typically has not yet been loaned out
+        BookResponseDTOv2 responseBody = mapper.bookToDTOV2(service.save(newBook),true); //A created book typically has not yet been loaned out
 
 
         return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponseWrapper<>(responseBody,"v2") );
@@ -64,9 +66,9 @@ public class BookControllerv2 {
     @Operation(summary = "Get all books")
     @ApiResponse(responseCode = "200", description = "Success")
     @GetMapping
-    public ResponseEntity<ApiResponseWrapper<List<BookRequestDTOv2>>> getAll() {
+    public ResponseEntity<ApiResponseWrapper<List<BookResponseDTOv2>>> getAll() {
 
-        List<BookRequestDTOv2> books =
+        List<BookResponseDTOv2> books =
                 service.findAll().stream()
                         .map(book -> mapper.bookToDTOV2(
                                 book,
@@ -91,14 +93,61 @@ public class BookControllerv2 {
             ),
     })
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponseWrapper<BookRequestDTOv2>> getBookByID(@PathVariable Long id){
-        BookRequestDTOv2 data = mapper.bookToDTOV2(
+    public ResponseEntity<ApiResponseWrapper<BookResponseDTOv2>> getBookByID(@PathVariable Long id){
+        BookResponseDTOv2 data = mapper.bookToDTOV2(
                         service.getBookByID(id),
                         loanService.findActiveLoan(id).isPresent());
 
-        return ResponseEntity.ok(new ApiResponseWrapper<BookRequestDTOv2>(
+        return ResponseEntity.ok(new ApiResponseWrapper<BookResponseDTOv2>(
                 data,"v2"
         ));
+    }
+
+    @Operation(summary = "Update the book with ID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Success"),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Not Found",
+                    content = @Content(
+                            schema = @Schema(implementation = ApiError.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "409",
+                    description = "Conflict",
+                    content = @Content(
+                            schema = @Schema(implementation = ApiError.class)
+                    )
+            )
+    })
+    @PatchMapping("/{id}")
+    public ResponseEntity<ApiResponseWrapper<BookResponseDTOv2>> update(
+            @PathVariable Long id,
+            @RequestBody UpdateBookRequestDTO dto
+    ) {
+        Book updated = service.update(id, dto);
+        Boolean available = loanService.findActiveLoan(id).isEmpty();
+        return ResponseEntity.ok(new ApiResponseWrapper<>(mapper.bookToDTOV2(updated,available),"v2"));
+
+
+    }
+
+    @Operation(summary = "Delete a book")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Successfully deleted entry"),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Not Found",
+                    content = @Content(
+                            schema = @Schema(implementation = ApiError.class)
+                    )
+            ),
+    })
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id){
+        service.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
 

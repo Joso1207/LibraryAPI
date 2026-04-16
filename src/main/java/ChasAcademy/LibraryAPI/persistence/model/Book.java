@@ -10,6 +10,9 @@ import org.hibernate.validator.constraints.ISBN;
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class Book {
 
+    @Version
+    private long version;
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Setter(AccessLevel.PROTECTED)

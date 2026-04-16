@@ -5,5 +5,5 @@ import lombok.Builder;
 
 
 @Builder
-public record BookRequestDTOv2(Long id, String title, AuthorDTO author,Boolean available , String isbn, Integer yearPublished) {
+public record BookResponseDTOv2(Long id, String title, AuthorDTO author, Boolean available , String isbn, Integer yearPublished) {
 }

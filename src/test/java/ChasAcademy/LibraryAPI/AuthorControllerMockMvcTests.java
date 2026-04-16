@@ -2,7 +2,6 @@ package ChasAcademy.LibraryAPI;
 
 
 import ChasAcademy.LibraryAPI.api.core.dto.NewAuthorDTO;
-import ChasAcademy.LibraryAPI.api.v1.controller.AuthorControllerv1;
 import ChasAcademy.LibraryAPI.persistence.model.Author;
 import ChasAcademy.LibraryAPI.persistence.model.Book;
 import ChasAcademy.LibraryAPI.persistence.repository.AuthorRepository;
@@ -30,7 +29,7 @@ import tools.jackson.databind.ObjectMapper;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-public class AuthorControllerTests {
+public class AuthorControllerMockMvcTests {
 
 
     @Autowired
@@ -50,7 +49,6 @@ public class AuthorControllerTests {
 
     @BeforeEach
     void setup(){
-
     }
 
     @Test

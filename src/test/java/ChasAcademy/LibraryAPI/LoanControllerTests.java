@@ -8,7 +8,6 @@ import ChasAcademy.LibraryAPI.persistence.repository.BookRepository;
 import ChasAcademy.LibraryAPI.persistence.repository.LoanRepository;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,11 +15,8 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.*;
 
@@ -30,7 +26,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 public class LoanControllerTests {
 
@@ -54,8 +50,6 @@ public class LoanControllerTests {
         loanRepository.deleteAll();
         bookRepository.deleteAll();
         authorRepository.deleteAll();
-
-
     }
 
     @Test
@@ -88,19 +82,17 @@ public class LoanControllerTests {
 
     @Test
     void shouldNotAllowSimultaneousLoansForSameBook() throws Exception {
-        // Arrange
+
         Author author = authorRepository.save(new Author("TestName"));
         Book book = bookRepository.save(new Book("HitchIt", author));
 
         String requestBody = book.getId().toString();
 
         ExecutorService executor = Executors.newFixedThreadPool(2);
-
-        // Ensures both threads start at the same time
         CyclicBarrier barrier = new CyclicBarrier(2);
 
         Callable<Integer> task = () -> {
-            barrier.await(); // synchronize start
+            barrier.await();
 
             return mockMvc.perform(post("/v1/api/loans")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -110,26 +102,32 @@ public class LoanControllerTests {
                     .getStatus();
         };
 
-        // Act
-        List<Future<Integer>> futures = executor.invokeAll(List.of(task, task));
+        try {
+            List<Future<Integer>> futures = executor.invokeAll(List.of(task, task));
 
-        // Collect results
-        List<Integer> statuses = new ArrayList<>();
-        for (Future<Integer> future : futures) {
-            System.out.println(future.get());
-            statuses.add(future.get());
+            List<Integer> statuses = new ArrayList<>();
+            for (Future<Integer> f : futures) {
+                Integer status = f.get();
+                statuses.add(status);
+            }
+
+            long successCount = statuses.stream()
+                    .filter(s -> s == HttpStatus.CREATED.value())
+                    .count();
+
+            long conflictCount = statuses.stream()
+                    .filter(s -> s == HttpStatus.CONFLICT.value())
+                    .count();
+
+            assertEquals(1, successCount);
+            assertEquals(1, conflictCount);
+
+            assertEquals(1, loanRepository.count());
+
+        } finally {
+            executor.shutdown();
+            executor.awaitTermination(2, TimeUnit.SECONDS);
         }
-
-        executor.shutdown();
-
-        // Assert
-        long successCount = statuses.stream().filter(s -> s == HttpStatus.CREATED.value()).count();
-        long conflictCount = statuses.stream().filter(s -> s == HttpStatus.BAD_REQUEST.value()).count();
-
-        assertEquals(1,successCount);
-        assertEquals(1,conflictCount);
-
-        assertEquals(1,loanRepository.count());
     }
 
 }

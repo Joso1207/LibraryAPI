@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.validator.constraints.ISBN;
+import org.springframework.data.repository.cdi.Eager;
 
 @Entity
 @Builder

@@ -6,29 +6,24 @@ import ChasAcademy.LibraryAPI.persistence.model.Loan;
 import ChasAcademy.LibraryAPI.persistence.repository.AuthorRepository;
 import ChasAcademy.LibraryAPI.persistence.repository.BookRepository;
 import ChasAcademy.LibraryAPI.persistence.repository.LoanRepository;
-import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.resttestclient.TestRestTemplate;
+import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureMockMvc
-public class LoanControllerTests {
+@AutoConfigureTestRestTemplate
+public class LoanControllerRestTemplateTests {
 
     @Autowired
     private LoanRepository loanRepository;
@@ -40,44 +35,55 @@ public class LoanControllerTests {
     private BookRepository bookRepository;
 
     @Autowired
-    private MockMvc mockMvc;
+    private TestRestTemplate restTemplate;
 
-    @Autowired
-    private EntityManager entityManager;
+    @LocalServerPort
+    private int port;
+
+    private String baseUrl() {
+        return "http://localhost:" + port + "/v1/api/loans";
+    }
 
     @AfterEach
-    void cleanup(){
+    void cleanup() {
         loanRepository.deleteAll();
         bookRepository.deleteAll();
         authorRepository.deleteAll();
     }
 
     @Test
-    void shouldFetchLoan() throws Exception {
-        //Arrange
-        Author newAuthor = authorRepository.save(new Author("TestName"));
-        Book bookToLoan = bookRepository.save(new Book("HitchIt",newAuthor));
-        Loan loanToFetch = loanRepository.save(new Loan(bookToLoan));
+    void shouldFetchLoan() {
 
+        Author author = authorRepository.save(new Author("TestName"));
+        Book book = bookRepository.save(new Book("HitchIt", author));
+        Loan loan = loanRepository.save(new Loan(book));
 
-        //Act
-        mockMvc.perform(get("/v1/api/loans/"+loanToFetch.getId()))
-                //Assert
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.bookTitle").value("HitchIt"));
+        ResponseEntity<String> response =
+                restTemplate.getForEntity(baseUrl() + "/" + loan.getId(), String.class);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assert response.getBody().contains("HitchIt");
     }
 
     @Test
-    void shouldCreateLoan() throws Exception{
-        Author newAuthor = authorRepository.save(new Author("TestName"));
-        Book bookToLoan = bookRepository.save(new Book("HitchIt",newAuthor));
+    void shouldCreateLoan() {
 
-        mockMvc.perform(post("/v1/api/loans")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(bookToLoan.getId().toString()))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.bookTitle").value("HitchIt"));
+        Author author = authorRepository.save(new Author("TestName"));
+        Book book = bookRepository.save(new Book("HitchIt", author));
 
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<String> request = new HttpEntity<>(
+                book.getId().toString(),
+                headers
+        );
+
+        ResponseEntity<String> response =
+                restTemplate.postForEntity(baseUrl(), request, String.class);
+
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assert response.getBody().contains("HitchIt");
     }
 
     @Test
@@ -94,12 +100,15 @@ public class LoanControllerTests {
         Callable<Integer> task = () -> {
             barrier.await();
 
-            return mockMvc.perform(post("/v1/api/loans")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(requestBody))
-                    .andReturn()
-                    .getResponse()
-                    .getStatus();
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            HttpEntity<String> request = new HttpEntity<>(requestBody, headers);
+
+            ResponseEntity<String> response =
+                    restTemplate.postForEntity(baseUrl(), request, String.class);
+
+            return response.getStatusCode().value();
         };
 
         try {
@@ -107,8 +116,7 @@ public class LoanControllerTests {
 
             List<Integer> statuses = new ArrayList<>();
             for (Future<Integer> f : futures) {
-                Integer status = f.get();
-                statuses.add(status);
+                statuses.add(f.get());
             }
 
             long successCount = statuses.stream()
@@ -129,5 +137,4 @@ public class LoanControllerTests {
             executor.awaitTermination(2, TimeUnit.SECONDS);
         }
     }
-
 }

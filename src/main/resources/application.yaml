@@ -6,8 +6,19 @@ spring:
       enabled: true
   datasource:
     url: jdbc:h2:mem:librarydb
-    username: sa
-    password: pass
+    username: ${libraryapi.spring.datasource.username}
+    password: ${libraryapi.spring.datasource.password}
     driverClassName: org.h2.Driver
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
+  config:
+    import: vault://
+  cloud:
+    vault:
+      uri: http://127.0.0.1:8200
+      authentication: TOKEN
+      scheme: http
+      kv:
+        enabled: true
+        backend: secret
+        default-context: application

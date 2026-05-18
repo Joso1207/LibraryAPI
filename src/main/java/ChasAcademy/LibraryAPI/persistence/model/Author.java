@@ -17,15 +17,15 @@ public class Author {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Setter(AccessLevel.PROTECTED)
-    Long id;
+    private Long id;
 
     @Column(nullable = false,unique = true)
     @NotBlank(message = "Name of Author cannot be Blank")
-    String name;
+    private String name;
 
     @OneToMany(mappedBy = "author")
     @Builder.Default
-    List<Book> writtenWorks = new ArrayList<>();
+    private List<Book> writtenWorks = new ArrayList<>();
 
     public Author(String name){
         this.name = name;

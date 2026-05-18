@@ -16,21 +16,21 @@ public class Loan {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    Long id;
+    private Long id;
 
     @OneToOne
     @NotNull
     @JoinColumn(name = "book_id", nullable = false)
-    Book book;
+    private Book book;
 
     @Column
     @PastOrPresent
     @Builder.Default
-    LocalDate loanDate = LocalDate.now();
+    private LocalDate loanDate = LocalDate.now();
 
     @Column
     @Builder.Default
-    LocalDate returnDate = null;
+    private LocalDate returnDate = null;
 
     public Loan(Book book){
         this.book = book;

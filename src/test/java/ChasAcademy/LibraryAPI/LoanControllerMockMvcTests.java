@@ -14,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@WithMockUser
 public class LoanControllerMockMvcTests {
 
     @Autowired
@@ -78,7 +80,7 @@ public class LoanControllerMockMvcTests {
 
     }
 
-    @Test
+    @Test //Sometimes fails due to having zero successes as in no loans were made.  RestTestTemplate version of this test seems to never fail
     void shouldNotAllowSimultaneousLoansForSameBook() throws Exception {
 
         Author author = authorRepository.save(new Author("TestName"));

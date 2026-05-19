@@ -29,11 +29,16 @@ public class UserService {
     }
 
     public AppUser createUser(String username, String password, String role){
-        return AppUser.builder()
+        AppUser newUser =
+                AppUser.builder()
                 .username(username)
                 .password(encoder.encode(password))
                 .role(role)
                 .build();
+
+
+        return repo.save(newUser);
+
     }
 
     public Optional<AppUser> findByUsername(String username){

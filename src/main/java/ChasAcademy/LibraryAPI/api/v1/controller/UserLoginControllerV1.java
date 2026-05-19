@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("v1/api/user")
 public class UserLoginControllerV1 {
@@ -35,8 +37,8 @@ public class UserLoginControllerV1 {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@Valid @RequestBody UserRequest loginRequest){
-        return ResponseEntity.ok(loginService.login(loginRequest.username(),loginRequest.password()));
+    public ResponseEntity<Map<String,String>> login(@Valid @RequestBody UserRequest loginRequest){
+        return ResponseEntity.ok(Map.of("token", loginService.login(loginRequest.username(),loginRequest.password())));
 
 
 

@@ -81,15 +81,16 @@ public class BookControllerMockMvcTests {
     @Test
     public void shouldGetAllBooks() throws Exception {
 
-        Author author = new Author("Author");
-        repo.save(new Book("Book1", authorRepo.save(author)));
+        Author author = authorRepo.save(new Author("Author"));
+        Author author2 = authorRepo.save(new Author("Author2"));
 
-        Author author2 = new Author("Author2");
-        repo.save(new Book("Book2", authorRepo.save(author)));
+        repo.save(new Book("Book1", author));
+        repo.save(new Book("Book2", author2));
+        System.out.println("BOOK COUNT: " + repo.count());
 
         mockMvc.perform(get("/v2/api/books"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data[1].title").value("Book1"));
+                .andExpect(jsonPath("$.data[1].title").value("Book2"));
     }
 
     @Test

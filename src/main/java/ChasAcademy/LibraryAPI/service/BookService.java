@@ -39,13 +39,13 @@ public class BookService {
         return bookRepository.findAllWithAuthor();
     }
 
-    @Cacheable(value = "books", key = "#id")
+    @Cacheable(value = "book", key = "#id")
     public Book getBookByID(Long id){
        return  bookRepository.findByIdWithAuthor(id).orElseThrow(
                () -> new BookNotFoundException(id));
     }
 
-    @CacheEvict(value = "books", key = "#id")
+    @CacheEvict(value = {"books", "book"}, allEntries = true)
     public void delete(Long id){
         bookRepository.delete(
                 bookRepository.findById(id).orElseThrow(
@@ -55,6 +55,7 @@ public class BookService {
 
     //Method is transactional as its multiple steps,
     //Additionally uses OptimisticLocking on Book as to allow for Concurrency.
+    @CacheEvict(value = {"books", "book"}, allEntries = true)
     public Book update(Long id, UpdateBookRequestDTO dto) {
         int attempts = 0;
 
@@ -71,7 +72,7 @@ public class BookService {
 
     }
 
-    @CachePut(value = "books", key = "#result.id")
+    @CacheEvict(value = {"books", "book"}, allEntries = true)
     @Transactional//Separated the update attempt due to exception marking transaction to roll back otherwise
     public Book doUpdate(Long id, UpdateBookRequestDTO dto) {
 
@@ -85,7 +86,7 @@ public class BookService {
         return existing;
     }
 
-    @CachePut(value = "books", key="#result.id")
+    @CacheEvict(value = "books", allEntries = true)
     public Book save(NewBookRequestDTO dto){
         Author author;
         if(dto.author() == null){

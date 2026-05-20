@@ -1,6 +1,7 @@
 package ChasAcademy.LibraryAPI.api.core.exceptions;
 
 import org.springframework.dao.DataIntegrityViolationException;
+
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +9,8 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import ChasAcademy.LibraryAPI.api.core.exceptions.ApiError;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -21,77 +24,82 @@ public class GlobalExceptionHandler {
     // Example: handle "book not found"
     //!! NOTE;  IN PRODUCTION WE DO NOT EXPOSE ex.getMessage()
     @ExceptionHandler(BookNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> bookNotFound(BookNotFoundException ex) {
-        Map<String, Object> body = new HashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("status", HttpStatus.NOT_FOUND.value());
-        body.put("error", "Book Not Found");
-        body.put("message", ex.getMessage());
-        body.put("Test","This was Generated with a custom Exception");
+    public ResponseEntity<ApiError> bookNotFound(BookNotFoundException ex) {
+        ApiError body = ApiError.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.NOT_FOUND.value())
+                .error("Book Not Found")
+                .message(ex.getMessage())
+                .details(Map.of("Test","This was generated with a custom exception"))
+                .build();
+
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(AuthorNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> authorNotFound(AuthorNotFoundException ex) {
-        Map<String, Object> body = new HashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("status", HttpStatus.NOT_FOUND.value());
-        body.put("error", "Author Not Found");
-        body.put("message", Optional.ofNullable(ex.getMessage())
-                .orElse("Author Not Found"));
-        body.put("Test","This was Generated with a custom Exception");
+    public ResponseEntity<ApiError> authorNotFound(AuthorNotFoundException ex) {
+        ApiError body = ApiError.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.NOT_FOUND.value())
+                .error("Author Not Found")
+                .message(ex.getMessage())
+                .details(Map.of("Test","This was generated with a custom exception"))
+                .build();
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(LoanNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> loanNotFound(LoanNotFoundException ex) {
-        Map<String, Object> body = new HashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("status", HttpStatus.NOT_FOUND.value());
-        body.put("error", "Loan Not Found");
-        body.put("message", Optional.ofNullable(ex.getMessage())
-                .orElse("Loan not found"));
-        body.put("Test","This was Generated with a custom Exception");
+    public ResponseEntity<ApiError> loanNotFound(LoanNotFoundException ex) {
+        ApiError body = ApiError.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.NOT_FOUND.value())
+                .error("Loan Not Found")
+                .message(Optional.ofNullable(ex.getMessage()).orElse("Loan not found"))
+                .details(Map.of("Test","This was generated with a custom exception"))
+                .build();
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(BookNotAvailableException.class)
-    public ResponseEntity<Map<String, Object>> unavailableBook(BookNotAvailableException ex) {
-        Map<String, Object> body = new HashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("status", HttpStatus.BAD_REQUEST.value());
-        body.put("error", "Unable to create Loan");
-        body.put("message", Optional.ofNullable(ex.getMessage())
-                .orElse("Book not available"));
-        body.put("Test","This was Generated with a custom Exception");
+    public ResponseEntity<ApiError> unavailableBook(BookNotAvailableException ex) {
+        ApiError body = ApiError.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error("Book Currently Unavailable")
+                .message(Optional.ofNullable(ex.getMessage()).orElse("Book not available"))
+                .details(Map.of("Test","This was generated with a custom exception"))
+                .build();
+
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<Map<String, Object>> handleConstraintViolation(DataIntegrityViolationException ex) {
-        Map<String, Object> body = new HashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("status", HttpStatus.CONFLICT.value());
-        body.put("error", "Conflict");
-        body.put("message", Optional.ofNullable(ex.getMessage())
-                .orElse("Database constraint violated"));
+    public ResponseEntity<ApiError> handleConstraintViolation(DataIntegrityViolationException ex) {
+        ApiError body = ApiError.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.CONFLICT.value())
+                .error("Conflict")
+                .message(Optional.ofNullable(ex.getMessage()).orElse("Database constraint violated"))
+                .build();
+
         return new ResponseEntity<>(body, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(OptimisticLockingFailureException.class)
-    public ResponseEntity<Map<String, Object>> handleOptimisticLocking() {
+    public ResponseEntity<ApiError> handleOptimisticLocking(OptimisticLockingFailureException ex) {
 
-        Map<String, Object> body = new HashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("status", HttpStatus.CONFLICT);
-        body.put("error", "Conflict");
-        body.put("message", "Resource was modified by another request");
+        ApiError body = ApiError.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.CONFLICT.value())
+                .error("Conflict")
+                .message("Resource was modified by another request")
+                .build();
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, Object>> handleValidationException(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ApiError> handleValidationException(MethodArgumentNotValidException ex) {
 
         Map<String, String> fieldErrors = new HashMap<>();
 
@@ -105,37 +113,40 @@ public class GlobalExceptionHandler {
                 fieldErrors.put("global", error.getDefaultMessage())
         );
 
-        Map<String, Object> body = new HashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("status", HttpStatus.BAD_REQUEST.value());
-        body.put("error", "Validation Error");
-        body.put("message", "Request validation failed");
-        body.put("fields", fieldErrors);
+        ApiError body = ApiError.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error("Validation Error")
+                .message("Request Validation Failed")
+                .details(fieldErrors)
+                .build();
 
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<Map<String, Object>> handleMissingBody(HttpMessageNotReadableException ex) {
+    public ResponseEntity<ApiError> handleMissingBody(HttpMessageNotReadableException ex) {
 
-        Map<String, Object> body = new HashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("status", HttpStatus.BAD_REQUEST.value());
-        body.put("error", "Bad Request");
-        body.put("message", "Request body is required");
+        ApiError body = ApiError.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error("Bad Request")
+                .message("Requestbody required")
+                .build();
 
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
     // Generic exception handler for other errors
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, Object>> handleGenericException(Exception ex) {
-        Map<String, Object> body = new HashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
-        body.put("error", "Internal Server Error");
-        body.put("message", Optional.ofNullable(ex.getMessage())
-                .orElse("An unexpected error occurred"));
+    public ResponseEntity<ApiError> handleGenericException(Exception ex) {
+        ApiError body = ApiError.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .error("Internal Server Error")
+                .message(Optional.ofNullable(ex.getMessage())
+                        .orElse("An unexpected error occurred"))
+                .build();
         return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

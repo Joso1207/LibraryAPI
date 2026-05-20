@@ -58,7 +58,7 @@ public class LoanService {
 
 
     public Page<Loan> activeLoansPage(Pageable pageable){
-        return repo.findByReturnDateIsNull(Pageable pageable);
+        return repo.findByReturnDateIsNull(pageable);
     }
 
 

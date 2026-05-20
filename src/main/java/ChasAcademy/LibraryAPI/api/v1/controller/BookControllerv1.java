@@ -14,6 +14,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -58,11 +60,11 @@ public class BookControllerv1 {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseBody);
     }
 
-    @Operation(summary = "Get all books")
+    @Operation(summary = "Get a list of books")
     @ApiResponse(responseCode = "200", description = "Success")
     @GetMapping
-    public List<BookResponseDTOv1> getAll(){
-        return service.findAll().stream().map(mapper::bookToDTOV1).toList();
+    public Page<BookResponseDTOv1> getBooks(Pageable pageable){
+        return service.findAll(pageable).map(mapper::bookToDTOV1);
     }
 
     @Operation(summary = "Get specific book")

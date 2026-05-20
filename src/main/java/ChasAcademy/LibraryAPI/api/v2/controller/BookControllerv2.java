@@ -15,6 +15,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -66,15 +68,14 @@ public class BookControllerv2 {
     @Operation(summary = "Get all books")
     @ApiResponse(responseCode = "200", description = "Success")
     @GetMapping
-    public ResponseEntity<ApiResponseWrapper<List<BookResponseDTOv2>>> getAll() {
+    public ResponseEntity<ApiResponseWrapper<Page<BookResponseDTOv2>>> getAll(Pageable pageable) {
 
-        List<BookResponseDTOv2> books =
-                service.findAll().stream()
+        Page<BookResponseDTOv2> books =
+                service.findAll(pageable)
                         .map(book -> mapper.bookToDTOV2(
                                 book,
                                 loanService.bookIsAvailable(book.getId())
-                        ))
-                        .toList();
+                        ));
 
         return ResponseEntity.ok(
                 new ApiResponseWrapper<>(books, "v2")

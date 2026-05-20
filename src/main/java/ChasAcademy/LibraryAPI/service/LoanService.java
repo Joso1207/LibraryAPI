@@ -9,6 +9,8 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,8 +29,8 @@ public class LoanService {
     }
 
     @Cacheable("loans")
-    public List<Loan> getAllLoans(){
-        return repo.findAll();
+    public Page<Loan> getLoans(Pageable pageable){
+        return repo.findAll(pageable);
     }
 
     @Cacheable(value = "loan", key="#id")
@@ -52,6 +54,11 @@ public class LoanService {
     @Cacheable("activeLoans")
     public List<Loan> activeLoans(){
         return repo.findByReturnDateIsNull();
+    }
+
+
+    public Page<Loan> activeLoansPage(Pageable pageable){
+        return repo.findByReturnDateIsNull(Pageable pageable);
     }
 
 

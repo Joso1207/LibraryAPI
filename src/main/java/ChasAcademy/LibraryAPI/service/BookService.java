@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,8 +37,8 @@ public class BookService {
     }
 
     @Cacheable("books")
-    public List<Book> findAll(){
-        return bookRepository.findAllWithAuthor();
+    public Page<Book> findAll(Pageable pageable){
+        return bookRepository.findAllWithAuthor(pageable);
     }
 
     @Cacheable(value = "book", key = "#id")

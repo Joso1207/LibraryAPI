@@ -10,6 +10,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -58,8 +60,8 @@ public class LoanControllerv1 {
     @Operation(summary = "Get all loans currently listed as active")
     @ApiResponse(responseCode = "200", description = "Success")
     @GetMapping
-    public List<LoanDTO> allLoans(){
-        return service.activeLoans().stream().map(loanMapperv1::loanToDTO).toList();
+    public ResponseEntity<Page<LoanDTO>> Loans(Pageable pageable){
+        return ResponseEntity.ok(service.activeLoansPage(pageable).map(loanMapperv1::loanToDTO));
     }
 
     @Operation(summary = "Get all specific loan")
@@ -78,11 +80,11 @@ public class LoanControllerv1 {
         return ResponseEntity.status(HttpStatus.OK).body(loanMapperv1.loanToDTO(service.getLoanByID(id)));
     }
 
-    @Operation(summary = "Get all loans active or inactive")
+    @Operation(summary = "List loans active or inactive")
     @ApiResponse(responseCode = "200", description = "Success")
     @GetMapping("/history")
-    public List<LoanDTO> historicalLoans(){
-        return service.getAllLoans().stream().map(loanMapperv1::loanToDTO).toList();
+    public ResponseEntity<Page<LoanDTO>> historicalLoans(Pageable pageable){
+        return ResponseEntity.ok(service.getLoans(pageable).map(loanMapperv1::loanToDTO));
     }
 
 

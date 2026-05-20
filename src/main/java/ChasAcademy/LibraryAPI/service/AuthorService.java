@@ -9,6 +9,8 @@ import ChasAcademy.LibraryAPI.persistence.repository.AuthorRepository;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,8 +25,8 @@ public class AuthorService {
     }
 
     @Cacheable("authors")
-    public List<Author> findAll(){
-        return authorRepository.findAll();
+    public Page<Author> findAll(Pageable pageable){
+        return authorRepository.findAll(pageable);
     }
 
     @Cacheable(value = "authors", key = "#id")

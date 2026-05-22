@@ -9,6 +9,8 @@ import ChasAcademy.LibraryAPI.api.v2.mapper.BookMapperV2;
 import ChasAcademy.LibraryAPI.persistence.model.Book;
 import ChasAcademy.LibraryAPI.service.BookService;
 import ChasAcademy.LibraryAPI.service.LoanService;
+import ChasAcademy.LibraryAPI.service.viewModels.AuthorViewModel;
+import ChasAcademy.LibraryAPI.service.viewModels.BookViewModel;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -74,7 +76,7 @@ public class BookControllerv2 {
                 service.findAll(pageable)
                         .map(book -> mapper.bookToDTOV2(
                                 book,
-                                loanService.bookIsAvailable(book.getId())
+                                loanService.bookIsAvailable(book.id())
                         ));
 
         return ResponseEntity.ok(
@@ -95,8 +97,10 @@ public class BookControllerv2 {
     })
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponseWrapper<BookResponseDTOv2>> getBookByID(@PathVariable Long id){
+        Book book = service.getBookEntityByID(id);
+
         BookResponseDTOv2 data = mapper.bookToDTOV2(
-                        service.getBookByID(id),
+                        new BookViewModel(book),
                         loanService.bookIsAvailable(id));
 
         return ResponseEntity.ok(new ApiResponseWrapper<BookResponseDTOv2>(

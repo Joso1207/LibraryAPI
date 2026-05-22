@@ -82,7 +82,7 @@ public class AuthorControllerv1 {
     public ResponseEntity<List<BookResponseDTOv1>> getWrittenWorks(@PathVariable Long authorID){
         return ResponseEntity.ok(
                 service.findAuthorByID(authorID)
-                        .getWrittenWorks()
+                        .writtenWorks().values()
                         .stream()
                         .map(bookMapper::bookToDTOV1)
                         .toList()

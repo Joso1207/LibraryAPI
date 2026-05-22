@@ -8,6 +8,7 @@ import ChasAcademy.LibraryAPI.persistence.repository.BookRepository;
 import ChasAcademy.LibraryAPI.security.SecurityConfig;
 import com.jayway.jsonpath.JsonPath;
 import jakarta.persistence.EntityManager;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,properties = "security.enabled=false")
 @AutoConfigureTestRestTemplate
 @Import(TestSecurityConfig.class)
+@ActiveProfiles("test")
 class AuthorControllerRestTemplateTests {
 
     @LocalServerPort
@@ -50,10 +52,10 @@ class AuthorControllerRestTemplateTests {
         return "http://localhost:" + port + "/v1/api/authors";
     }
 
-    @BeforeEach
+    @AfterEach
     void setup(){
-        repo.deleteAll();
         bookRepo.deleteAll();
+        repo.deleteAll();
     }
 
     @Test

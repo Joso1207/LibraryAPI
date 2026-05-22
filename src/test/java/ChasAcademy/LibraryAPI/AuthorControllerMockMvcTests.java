@@ -8,6 +8,7 @@ import ChasAcademy.LibraryAPI.persistence.repository.AuthorRepository;
 import ChasAcademy.LibraryAPI.persistence.repository.BookRepository;
 import com.jayway.jsonpath.JsonPath;
 import jakarta.persistence.EntityManager;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -30,6 +32,7 @@ import tools.jackson.databind.ObjectMapper;
 @SpringBootTest
 @AutoConfigureMockMvc
 @WithMockUser
+@ActiveProfiles("test")
 @Transactional
 public class AuthorControllerMockMvcTests {
 
@@ -49,8 +52,9 @@ public class AuthorControllerMockMvcTests {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @BeforeEach
+    @AfterEach
     void setup(){
+        
     }
 
     @Test

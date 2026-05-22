@@ -1,9 +1,11 @@
 package ChasAcademy.LibraryAPI.service;
 
 import ChasAcademy.LibraryAPI.api.core.exceptions.BookNotAvailableException;
+import ChasAcademy.LibraryAPI.api.core.exceptions.BookNotFoundException;
 import ChasAcademy.LibraryAPI.api.core.exceptions.LoanNotFoundException;
 import ChasAcademy.LibraryAPI.persistence.model.Book;
 import ChasAcademy.LibraryAPI.persistence.model.Loan;
+import ChasAcademy.LibraryAPI.persistence.repository.BookRepository;
 import ChasAcademy.LibraryAPI.persistence.repository.LoanRepository;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -21,11 +23,11 @@ import java.util.Optional;
 public class LoanService {
 
     private final LoanRepository repo;
-    private final BookService bookService;
+    private final BookRepository bookRepo;
 
-    public LoanService(LoanRepository repo,BookService bookService){
+    public LoanService(LoanRepository repo,BookRepository bookRepo){
         this.repo = repo;
-        this.bookService = bookService;
+        this.bookRepo = bookRepo;
     }
 
     @Cacheable("loans")
@@ -42,7 +44,6 @@ public class LoanService {
         );
     }
 
-    @Cacheable(value = "activeLoan", key="#bookID")
     public Optional<Loan> findActiveLoan(Long bookID){
         return repo.findByBookIdAndReturnDateIsNull(bookID);
     }
@@ -74,7 +75,7 @@ public class LoanService {
     @Transactional
     public synchronized Loan addLoan(Long bookID){
 
-        Book book = bookService.getBookByID(bookID); //Throws bookNotFound if book does not exist
+        Book book = bookRepo.findById(bookID).orElseThrow(() -> new BookNotFoundException(bookID));
 
         if(findActiveLoan(bookID).isPresent()){
             throw new BookNotAvailableException(bookID);

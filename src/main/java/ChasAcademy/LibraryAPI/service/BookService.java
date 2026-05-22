@@ -8,6 +8,7 @@ import ChasAcademy.LibraryAPI.persistence.model.Author;
 import ChasAcademy.LibraryAPI.persistence.model.Book;
 import ChasAcademy.LibraryAPI.persistence.repository.AuthorRepository;
 import ChasAcademy.LibraryAPI.persistence.repository.BookRepository;
+import ChasAcademy.LibraryAPI.service.viewModels.BookViewModel;
 import jakarta.persistence.OptimisticLockException;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,14 +38,19 @@ public class BookService {
     }
 
     @Cacheable("books")
-    public Page<Book> findAll(Pageable pageable){
-        return bookRepository.findAllWithAuthor(pageable);
+    public Page<BookViewModel> findAll(Pageable pageable){
+        return bookRepository.findAllWithAuthor(pageable).map(BookViewModel::new);
     }
 
     @Cacheable(value = "book", key = "#id")
-    public Book getBookByID(Long id){
-       return  bookRepository.findByIdWithAuthor(id).orElseThrow(
-               () -> new BookNotFoundException(id));
+    public BookViewModel getBookByID(Long id){
+       return new BookViewModel(bookRepository.findByIdWithAuthor(id).orElseThrow(
+               () -> new BookNotFoundException(id)));
+    }
+
+    public Book getBookEntityByID(Long id){
+        return bookRepository.findByIdWithAuthor(id).orElseThrow(
+                () -> new BookNotFoundException(id));
     }
 
     @CacheEvict(value = {"books", "book"}, allEntries = true)

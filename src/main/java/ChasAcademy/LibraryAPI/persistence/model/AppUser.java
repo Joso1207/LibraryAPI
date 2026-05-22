@@ -16,7 +16,7 @@ public class AppUser {
     @Setter(AccessLevel.PROTECTED)
     private long id;
 
-    @Column
+    @Column(unique = true)
     @NotBlank
     private String username;
     @Column

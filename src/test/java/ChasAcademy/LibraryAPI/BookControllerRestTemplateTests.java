@@ -17,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.*;
+import org.springframework.test.context.ActiveProfiles;
 import tools.jackson.databind.ObjectMapper;
 
 import java.time.Year;
@@ -29,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,properties = "security.enabled=false")
 @AutoConfigureTestRestTemplate
+@ActiveProfiles("test")
 @Import(TestSecurityConfig.class)
 public class BookControllerRestTemplateTests {
 
@@ -112,7 +114,7 @@ public class BookControllerRestTemplateTests {
 
         String body = response.getBody();
 
-        assertEquals("Book1", JsonPath.read(body, "$.data[0].title"));
+        assertEquals(2, (Integer) JsonPath.read(body, "$.data.content.length()"));
     }
 
 

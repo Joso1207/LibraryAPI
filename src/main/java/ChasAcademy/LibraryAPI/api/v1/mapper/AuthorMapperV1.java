@@ -3,6 +3,7 @@ package ChasAcademy.LibraryAPI.api.v1.mapper;
 import ChasAcademy.LibraryAPI.api.core.dto.AuthorDTO;
 import ChasAcademy.LibraryAPI.api.core.dto.NewAuthorDTO;
 import ChasAcademy.LibraryAPI.persistence.model.Author;
+import ChasAcademy.LibraryAPI.service.viewModels.AuthorViewModel;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -13,6 +14,14 @@ public class AuthorMapperV1 {
                 .name(author.getName())
                 .id(author.getId())
                 .writtenWorksAmount(author.getWrittenWorks().size())
+                .build();
+    }
+
+    public AuthorDTO authorToDTO(AuthorViewModel author){
+        return AuthorDTO.builder()
+                .name(author.name())
+                .id(author.id())
+                .writtenWorksAmount(author.writtenWorks().size())
                 .build();
     }
 

@@ -2,6 +2,7 @@ package ChasAcademy.LibraryAPI.api.v1.mapper;
 
 import ChasAcademy.LibraryAPI.api.core.dto.LoanDTO;
 import ChasAcademy.LibraryAPI.persistence.model.Loan;
+import ChasAcademy.LibraryAPI.service.viewModels.LoanViewModel;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -14,6 +15,16 @@ public class LoanMapperv1 {
                 .bookTitle(loan.getBook().getTitle())
                 .loanDate(loan.getLoanDate())
                 .returnDate(loan.getReturnDate())
+                .build();
+    }
+
+    public LoanDTO loanToDTO(LoanViewModel loan){
+        return LoanDTO.builder()
+                .id(loan.id())
+                .bookID(loan.book().id())
+                .bookTitle(loan.book().title())
+                .loanDate(loan.checkoutDate())
+                .returnDate(loan.returnDate())
                 .build();
     }
 

@@ -10,12 +10,15 @@ import ChasAcademy.LibraryAPI.persistence.repository.AuthorRepository;
 import ChasAcademy.LibraryAPI.persistence.repository.BookRepository;
 import ChasAcademy.LibraryAPI.service.BookService;
 import com.jayway.jsonpath.JsonPath;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @WithMockUser
-@Transactional
+@ActiveProfiles("test")
 public class BookControllerMockMvcTests {
 
     @Autowired
@@ -52,6 +55,13 @@ public class BookControllerMockMvcTests {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @AfterEach
+    @BeforeEach
+    void cleanup() {
+        repo.deleteAll();
+        authorRepo.deleteAll();
+    }
 
     @Test
     public void shouldCreateBook() throws Exception {
@@ -90,13 +100,13 @@ public class BookControllerMockMvcTests {
 
         mockMvc.perform(get("/v2/api/books"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data[1].title").value("Book2"));
+                .andExpect(jsonPath("$.data.content.length()").value(2));
     }
 
     @Test
     public void shouldGetBookById() throws Exception {
 
-        Author author = new Author("Author");
+        Author author = new Author("Author7");
         Book book = repo.save(new Book("HitchIt", authorRepo.save(author)));
 
         mockMvc.perform(get("/v2/api/books/" + book.getId()))
@@ -107,12 +117,13 @@ public class BookControllerMockMvcTests {
     @Test
     public void shouldUpdateBook() throws Exception {
 
-        Author author = new Author("Author");
+        Author author = authorRepo.save(new Author("Author"));
 
-        Book book = repo.save(new Book("OldTitle", authorRepo.save(author)));
+        Book book = repo.save(new Book("OldTitle",author ));
 
         UpdateBookRequestDTO updateDTO = UpdateBookRequestDTO.builder()
                 .title("UpdatedTitle")
+                .author(new AuthorReferenceDTO(book.getAuthor().getName(),book.getAuthor().getId()))
                 .build();
 
         mockMvc.perform(patch("/v2/api/books/" + book.getId())

@@ -1,19 +1,17 @@
 package ChasAcademy.LibraryAPI.service;
 
-import ChasAcademy.LibraryAPI.api.core.dto.AuthorDTO;
 import ChasAcademy.LibraryAPI.api.core.dto.NewAuthorDTO;
 import ChasAcademy.LibraryAPI.api.core.exceptions.AuthorNotFoundException;
+import ChasAcademy.LibraryAPI.api.core.mapper.JsonPageImpl;
 import ChasAcademy.LibraryAPI.persistence.model.Author;
-import ChasAcademy.LibraryAPI.persistence.model.Book;
 import ChasAcademy.LibraryAPI.persistence.repository.AuthorRepository;
+import ChasAcademy.LibraryAPI.service.viewModels.AuthorViewModel;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class AuthorService {
@@ -25,18 +23,19 @@ public class AuthorService {
     }
 
     @Cacheable("authors")
-    public Page<Author> findAll(Pageable pageable){
-        return authorRepository.findAll(pageable);
+    public Page<AuthorViewModel> findAll(Pageable pageable){
+        return authorRepository.findAll(pageable).map(AuthorViewModel::new);
     }
 
-    @Cacheable(value = "authors", key = "#id")
-    public Author findAuthorByID(Long id){
-        return authorRepository.findById(id).orElseThrow(
+
+    @Cacheable(value = "author", key = "#id")
+    public AuthorViewModel findAuthorByID(Long id){
+        return new AuthorViewModel(authorRepository.findById(id).orElseThrow(
                 () -> new AuthorNotFoundException(id)
-        );
+        ));
     }
 
-    @CachePut(value = "authors", key="#result.id")
+    @CacheEvict(value = "authors", allEntries = true)
     public Author addAuthor(NewAuthorDTO dto){
         return authorRepository.save(
                 Author.builder()

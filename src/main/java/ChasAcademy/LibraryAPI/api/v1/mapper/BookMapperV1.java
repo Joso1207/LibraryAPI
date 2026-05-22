@@ -6,6 +6,7 @@ import ChasAcademy.LibraryAPI.api.core.dto.NewBookRequestDTO;
 import ChasAcademy.LibraryAPI.api.v1.dto.BookResponseDTOv1;
 import ChasAcademy.LibraryAPI.api.v1.dto.NewBookRequestDTOv1;
 import ChasAcademy.LibraryAPI.persistence.model.Book;
+import ChasAcademy.LibraryAPI.service.viewModels.BookViewModel;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -20,6 +21,17 @@ public class BookMapperV1 {
                 .author(book.getAuthor().getName())
                 .isbn(book.getIsbn())
                 .yearPublished(book.getPublishedYear())
+                .build();
+    }
+
+    public BookResponseDTOv1 bookToDTOV1(BookViewModel book){
+        return BookResponseDTOv1.builder()
+                .id(book.id())
+                .title(book.title())
+                .authorID(book.authorID())
+                .author(book.author())
+                .isbn(book.isbn())
+                .yearPublished(book.yearPublished())
                 .build();
     }
 

@@ -28,7 +28,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,properties = "security.enabled=false")
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+        properties = {
+            "security.enabled=false",
+            "ratelimit.enabled=false"
+        }
+)
 @AutoConfigureTestRestTemplate
 @ActiveProfiles("test")
 @Import(TestSecurityConfig.class)

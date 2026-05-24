@@ -33,7 +33,8 @@ Only infrastructure services (Vault + Redis) run in Docker. The application is r
 ## Infrastructure (Docker)
 
 -Docker is used only to run supporting services:
--Remember to run docker-compose up -d
+-Remember to run 
+-docker-compose up -d
 
 -Create database secrets in Vault 
 

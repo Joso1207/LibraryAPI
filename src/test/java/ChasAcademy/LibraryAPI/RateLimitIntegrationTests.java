@@ -28,7 +28,7 @@ public class RateLimitIntegrationTests {
     @Test
     void shouldRateLimitRequestsFromSameIp() throws Exception {
 
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 50; i++) {
 
             mockMvc.perform(get("/v2/api/books")
                             .with(request -> {
@@ -49,7 +49,7 @@ public class RateLimitIntegrationTests {
     @Test
     void shouldUseSeparateBucketsPerIp() throws Exception {
 
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 50; i++) {
 
             mockMvc.perform(get("/v2/api/books")
                             .with(request -> {

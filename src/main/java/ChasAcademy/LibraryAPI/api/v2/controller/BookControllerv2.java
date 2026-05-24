@@ -1,6 +1,7 @@
 package ChasAcademy.LibraryAPI.api.v2.controller;
 
 import ChasAcademy.LibraryAPI.api.core.ApiResponseWrapper;
+import ChasAcademy.LibraryAPI.api.core.PageResponse;
 import ChasAcademy.LibraryAPI.api.core.dto.NewBookRequestDTO;
 import ChasAcademy.LibraryAPI.api.core.dto.UpdateBookRequestDTO;
 import ChasAcademy.LibraryAPI.api.core.exceptions.ApiError;
@@ -70,14 +71,21 @@ public class BookControllerv2 {
     @Operation(summary = "Get all books")
     @ApiResponse(responseCode = "200", description = "Success")
     @GetMapping
-    public ResponseEntity<ApiResponseWrapper<Page<BookResponseDTOv2>>> getAll(Pageable pageable) {
+    public ResponseEntity<ApiResponseWrapper<PageResponse<BookResponseDTOv2>>> getAll(Pageable pageable) {
+        PageResponse<BookViewModel> vmpage = service.findAll(pageable);
 
-        Page<BookResponseDTOv2> books =
-                service.findAll(pageable)
-                        .map(book -> mapper.bookToDTOV2(
-                                book,
-                                loanService.bookIsAvailable(book.id())
-                        ));
+        PageResponse<BookResponseDTOv2> books = new PageResponse<>(
+                    vmpage.content().stream().map(
+                    book->
+                            mapper.bookToDTOV2(
+                                    book,
+                                    loanService.bookIsAvailable(book.id())
+                            )
+                    ).toList(),
+                vmpage.page(),
+                vmpage.size(),
+                vmpage.totalElements()
+        );
 
         return ResponseEntity.ok(
                 new ApiResponseWrapper<>(books, "v2")

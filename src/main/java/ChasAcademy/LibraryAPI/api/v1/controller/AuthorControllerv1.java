@@ -1,5 +1,6 @@
 package ChasAcademy.LibraryAPI.api.v1.controller;
 
+import ChasAcademy.LibraryAPI.api.core.PageResponse;
 import ChasAcademy.LibraryAPI.api.core.dto.AuthorDTO;
 import ChasAcademy.LibraryAPI.api.core.dto.NewAuthorDTO;
 import ChasAcademy.LibraryAPI.api.core.exceptions.ApiError;
@@ -7,6 +8,7 @@ import ChasAcademy.LibraryAPI.api.v1.dto.BookResponseDTOv1;
 import ChasAcademy.LibraryAPI.api.v1.mapper.AuthorMapperV1;
 import ChasAcademy.LibraryAPI.api.v1.mapper.BookMapperV1;
 import ChasAcademy.LibraryAPI.service.AuthorService;
+import ChasAcademy.LibraryAPI.service.viewModels.AuthorViewModel;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -55,8 +57,14 @@ public class AuthorControllerv1 {
     @Operation(summary = "Get authors")
     @ApiResponse(responseCode = "200", description = "Success")
     @GetMapping
-    public Page<AuthorDTO> getAll(Pageable pageable){
-         return service.findAll(pageable).map(mapper::authorToDTO);
+    public PageResponse<AuthorDTO> getAll(Pageable pageable){
+        PageResponse<AuthorViewModel> vmpage = service.findAll(pageable);
+        return new PageResponse<>(
+                vmpage.content().stream().map(mapper::authorToDTO).toList(),
+                vmpage.page(),
+                vmpage.size(),
+                vmpage.totalElements()
+        );
     }
 
     @Operation(summary = "Get specific author")

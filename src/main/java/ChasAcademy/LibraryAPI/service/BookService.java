@@ -1,5 +1,6 @@
 package ChasAcademy.LibraryAPI.service;
 
+import ChasAcademy.LibraryAPI.api.core.PageResponse;
 import ChasAcademy.LibraryAPI.api.core.dto.NewBookRequestDTO;
 import ChasAcademy.LibraryAPI.api.core.dto.UpdateBookRequestDTO;
 import ChasAcademy.LibraryAPI.api.core.exceptions.AuthorNotFoundException;
@@ -38,8 +39,8 @@ public class BookService {
     }
 
     @Cacheable("books")
-    public Page<BookViewModel> findAll(Pageable pageable){
-        return bookRepository.findAllWithAuthor(pageable).map(BookViewModel::new);
+    public PageResponse<BookViewModel> findAll(Pageable pageable){
+        return new PageResponse<>(bookRepository.findAllWithAuthor(pageable).map(BookViewModel::new));
     }
 
     @Cacheable(value = "book", key = "#id")

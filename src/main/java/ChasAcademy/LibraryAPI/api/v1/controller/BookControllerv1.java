@@ -1,5 +1,6 @@
 package ChasAcademy.LibraryAPI.api.v1.controller;
 
+import ChasAcademy.LibraryAPI.api.core.PageResponse;
 import ChasAcademy.LibraryAPI.api.core.dto.NewBookRequestDTO;
 import ChasAcademy.LibraryAPI.api.core.dto.UpdateBookRequestDTO;
 import ChasAcademy.LibraryAPI.api.core.exceptions.ApiError;
@@ -8,6 +9,7 @@ import ChasAcademy.LibraryAPI.api.v1.dto.NewBookRequestDTOv1;
 import ChasAcademy.LibraryAPI.api.v1.mapper.BookMapperV1;
 import ChasAcademy.LibraryAPI.persistence.model.Book;
 import ChasAcademy.LibraryAPI.service.BookService;
+import ChasAcademy.LibraryAPI.service.viewModels.BookViewModel;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -63,8 +65,15 @@ public class BookControllerv1 {
     @Operation(summary = "Get a list of books")
     @ApiResponse(responseCode = "200", description = "Success")
     @GetMapping
-    public Page<BookResponseDTOv1> getBooks(Pageable pageable){
-        return service.findAll(pageable).map(mapper::bookToDTOV1);
+    public PageResponse<BookResponseDTOv1> getBooks(Pageable pageable){
+        PageResponse<BookViewModel> vmpage = service.findAll(pageable);
+
+        return new PageResponse<>(
+                vmpage.content().stream().map(mapper::bookToDTOV1).toList(),
+                vmpage.page(),
+                vmpage.size(),
+                vmpage.totalElements()
+        );
     }
 
     @Operation(summary = "Get specific book")

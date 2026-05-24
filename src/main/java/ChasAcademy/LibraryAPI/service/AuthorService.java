@@ -1,5 +1,6 @@
 package ChasAcademy.LibraryAPI.service;
 
+import ChasAcademy.LibraryAPI.api.core.PageResponse;
 import ChasAcademy.LibraryAPI.api.core.dto.NewAuthorDTO;
 import ChasAcademy.LibraryAPI.api.core.exceptions.AuthorNotFoundException;
 import ChasAcademy.LibraryAPI.api.core.mapper.JsonPageImpl;
@@ -23,8 +24,8 @@ public class AuthorService {
     }
 
     @Cacheable("authors")
-    public Page<AuthorViewModel> findAll(Pageable pageable){
-        return authorRepository.findAll(pageable).map(AuthorViewModel::new);
+    public PageResponse<AuthorViewModel> findAll(Pageable pageable){
+        return new PageResponse<>(authorRepository.findAll(pageable).map(AuthorViewModel::new));
     }
 
 
